@@ -22,9 +22,9 @@ class Entry: NSObject, NSCoding{
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     static let ArchiveURL = DocumentsDirectory.appendingPathComponent("entries")
     public var date : String
-    public var pushups : String
+    public var pushups : Int
     
-    init(date: String, pushUps: String) {
+    init(date: String, pushUps: Int) {
         self.date = date
         self.pushups = pushUps
     }
@@ -40,7 +40,7 @@ class Entry: NSObject, NSCoding{
            return nil
        }
        
-       guard let newPushups = aDecoder.decodeObject(forKey: PropertyKey.pushups) as? String else {
+       guard let newPushups = aDecoder.decodeObject(forKey: PropertyKey.pushups) as? Int else {
            os_log("Missing pushups", log: OSLog.default, type: .debug)
            return nil
        }

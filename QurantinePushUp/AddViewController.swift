@@ -31,7 +31,7 @@ class AddViewController: UIViewController {
         // US English Locale (en_US)
         dateFormatter.locale = Locale(identifier: "en_US")
          
-        data.insert(Entry(date: dateFormatter.string(from: date), pushUps: pushupsText.text ?? "undefined"),at: 0)
+        data.insert(Entry(date: dateFormatter.string(from: date), pushUps: Int(pushupsText.text ?? "0" ) ?? 0 ),at: 0)
     }
     
 }

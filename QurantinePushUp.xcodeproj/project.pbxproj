@@ -16,6 +16,7 @@
 		A80F4B8A2433D68B002F4C3A /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80F4B892433D68B002F4C3A /* AddViewController.swift */; };
 		A80F4B8E2433E363002F4C3A /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A80F4B8D2433E363002F4C3A /* Entry.swift */; };
 		A8E170222433EE20007B055C /* CustomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E170212433EE20007B055C /* CustomTableViewCell.swift */; };
+		A8E170242435479D007B055C /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E170232435479D007B055C /* HistoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		A80F4B892433D68B002F4C3A /* AddViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
 		A80F4B8D2433E363002F4C3A /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		A8E170212433EE20007B055C /* CustomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTableViewCell.swift; sourceTree = "<group>"; };
+		A8E170232435479D007B055C /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				A80F4B892433D68B002F4C3A /* AddViewController.swift */,
 				A80F4B8D2433E363002F4C3A /* Entry.swift */,
 				A8E170212433EE20007B055C /* CustomTableViewCell.swift */,
+				A8E170232435479D007B055C /* HistoryViewController.swift */,
 			);
 			path = QurantinePushUp;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				A80F4B7A2433C133002F4C3A /* ViewController.swift in Sources */,
 				A80F4B762433C133002F4C3A /* AppDelegate.swift in Sources */,
 				A80F4B8A2433D68B002F4C3A /* AddViewController.swift in Sources */,
+				A8E170242435479D007B055C /* HistoryViewController.swift in Sources */,
 				A80F4B782433C133002F4C3A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
