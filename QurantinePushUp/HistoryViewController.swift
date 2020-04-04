@@ -22,7 +22,6 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
     
     
    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(data.count)
         return data.count
        
    }

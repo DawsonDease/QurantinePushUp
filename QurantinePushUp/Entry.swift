@@ -28,10 +28,11 @@ class Entry: NSObject, NSCoding{
         self.date = date
         self.pushups = pushUps
     }
+    
     //MARK: NSCoding
     func encode(with acoder: NSCoder) {
         acoder.encode(date, forKey: PropertyKey.date)
-        acoder.encode(pushups, forKey: PropertyKey.pushups)
+        acoder.encode(String(pushups), forKey: PropertyKey.pushups)
     }
     
     required convenience init?(coder aDecoder: NSCoder){
@@ -40,12 +41,12 @@ class Entry: NSObject, NSCoding{
            return nil
        }
        
-       guard let newPushups = aDecoder.decodeObject(forKey: PropertyKey.pushups) as? Int else {
+       guard let newPushups = aDecoder.decodeObject(forKey: PropertyKey.pushups) as? String else {
            os_log("Missing pushups", log: OSLog.default, type: .debug)
            return nil
        }
        
-        self.init(date: newDate, pushUps: newPushups)
+        self.init(date: newDate, pushUps: Int(newPushups) ?? 0 )
     }
 
 }

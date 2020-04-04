@@ -22,7 +22,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        dailyRecordLabel.text = "0"
+        currentStreakLabel.text = "0"
         historyTable.dataSource = self
         historyTable.delegate = self
         entries = loadObjects() ?? entries
@@ -36,6 +37,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         //Searches through entries to calculate pushups
+        var record = 0
         var isSet : Bool = false
         let newEntry : Entry = Entry(date: entries[0].date, pushUps: 0)
         for entry in entries{
@@ -43,7 +45,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 newEntry.pushups += entry.pushups
 
             }
+            if(entry.pushups > record){
+                record = entry.pushups
+                
+            }
+            
         }
+        dailyRecordLabel.text = String(record)
         
         //Searches if the date is already recorded if not it is added to the dail pushups
         
@@ -58,6 +66,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if(!isSet){
             dailyPushups.insert(newEntry, at: 0)
         }
+        
         
         
         
@@ -78,7 +87,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         addViewController.data = entries
         save()
         }else{
-            print("in else")
             guard let historyViewController = segue.destination.children[0] as? HistoryViewController else{
                 fatalError("Unexpected Destination \(segue.destination)")
             }
@@ -101,7 +109,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
          if let sourceViewController = sender.source as? HistoryViewController {
-            print("Here")
+        
            entries = sourceViewController.data
            save()
            addPushups()
@@ -119,8 +127,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath) as! CustomTableViewCell
-        print(dailyPushups.count)
-        print(indexPath.row)
+       
         
         cell.date.text = dailyPushups[indexPath.row].date
         cell.pushups!.text = String(dailyPushups[indexPath.row].pushups)
@@ -139,10 +146,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     //MARK: Load/Save
     
     func save(){
+        
        do{
             let data = try NSKeyedArchiver.archivedData(withRootObject: entries, requiringSecureCoding: false)
             try data.write(to: Entry.ArchiveURL)
             historyTable.reloadData()
+    
         }catch{
             os_log("Cannot save due to %@", log: OSLog.default, type: .debug, error.localizedDescription)
         }
