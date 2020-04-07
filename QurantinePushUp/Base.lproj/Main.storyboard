@@ -243,7 +243,7 @@
                                             <segue destination="Dit-wn-aZM" kind="unwind" unwindAction="unwindToViewControllerWithSender:" id="YNi-Zt-9eq"/>
                                         </connections>
                                     </button>
-                                    <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="W7E-Yc-Xtf">
+                                    <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" translatesAutoresizingMaskIntoConstraints="NO" id="W7E-Yc-Xtf">
                                         <rect key="frame" x="0.0" y="90" width="320" height="216"/>
                                     </datePicker>
                                 </subviews>

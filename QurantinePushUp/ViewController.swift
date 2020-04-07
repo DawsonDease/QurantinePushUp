@@ -27,72 +27,75 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         historyTable.dataSource = self
         historyTable.delegate = self
         entries = loadObjects() ?? entries
-        addPushups()
+        dailyPushups = loadDaily() ?? dailyPushups
+        findRecord()
         // Do any additional setup after loading the view.
     }
     
-    func addPushups(){
-        if (entries.count < 1){
-            return
-        }
-        
-        //Searches through entries to calculate pushups
+    func addPushups(postToBeAdded: Entry){
         var record = 0
-        var isSet : Bool = false
-        let newEntry : Entry = Entry(date: entries[0].date, pushUps: 0)
-        for entry in entries{
-            if(newEntry.date == entry.date){
-                newEntry.pushups += entry.pushups
-
-            }
-            if(entry.pushups > record){
-                record = entry.pushups
-                
+        var isSet = false
+        for entry in dailyPushups{
+            if(postToBeAdded.date == entry.date){
+                entry.pushups += postToBeAdded.pushups
+                isSet = true
             }
             
-        }
-        dailyRecordLabel.text = String(record)
-        
-        //Searches if the date is already recorded if not it is added to the dail pushups
-        
-        for entry in dailyPushups{
-            if(newEntry.date == entry.date){
-                entry.pushups = newEntry.pushups
-                isSet = true
-                break;
+            if(postToBeAdded.pushups > record){
+                record = postToBeAdded.pushups
             }
         }
         
         if(!isSet){
-            dailyPushups.insert(newEntry, at: 0)
+            dailyPushups.insert(postToBeAdded, at: 0)
         }
         
-        
-        
-        
-        
+        findRecord()
+        historyTable.reloadData()
+        saveDaily()
     }
     
+    func removePushups(entryToBeDeleted: [Entry]){
+       var record = 0
+        for deletedEntry in entryToBeDeleted{
+            for (index, entry) in dailyPushups.enumerated(){
+                if(deletedEntry.date == entry.date){
+                    entry.pushups -= deletedEntry.pushups
+                    if(entry.pushups <= 0){
+                        dailyPushups.remove(at: index)
+                    }
+                    break
+                }
+                if(record < entry.pushups){
+                    record = entry.pushups
+                }
+            }
+        }
+        findRecord()
+        saveDaily()
+    }
+    
+    func findRecord(){
+        var record = 0
+        for entry in entries{
+            if record < entry.pushups{
+                record = entry.pushups
+            }
+        }
+        dailyRecordLabel.text = String(record)
+    }
     //MARK: Seque
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
-        if(segue.identifier == "ShowController"){
-           
+        if(segue.identifier == "ShowHistoryController"){
         
-        guard let addViewController = segue.destination.children[0] as? AddViewController else{
-            fatalError("Unexpected Destination \(segue.destination)")
-        }
-        
-        addViewController.data = entries
-        save()
-        }else{
             guard let historyViewController = segue.destination.children[0] as? HistoryViewController else{
                 fatalError("Unexpected Destination \(segue.destination)")
             }
             
             historyViewController.data = entries
-            save()
+            saveEntries()
             
         }
         
@@ -101,19 +104,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBAction func unwindToViewController(sender:UIStoryboardSegue){
         if let sourceViewController = sender.source as? AddViewController {
            
-            entries = sourceViewController.data
-            save()
-            addPushups()
+            entries.insert(sourceViewController.data, at: 0)
+            saveEntries()
+            addPushups(postToBeAdded: sourceViewController.data)
             
-            historyTable.reloadData()
-        }
-        
-         if let sourceViewController = sender.source as? HistoryViewController {
+            
+        }else if let sourceViewController = sender.source as? HistoryViewController {
         
            entries = sourceViewController.data
-           save()
-           addPushups()
-           historyTable.reloadData()
+           saveEntries()
+            removePushups(entryToBeDeleted: sourceViewController.deleted)
+           
        }
         
     }
@@ -127,25 +128,33 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath) as! CustomTableViewCell
-       
-        
         cell.date.text = dailyPushups[indexPath.row].date
         cell.pushups!.text = String(dailyPushups[indexPath.row].pushups)
         return cell;
     }
-    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            dailyPushups.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            save()
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
+          if editingStyle == .delete {
+              
+              dailyPushups.remove(at: indexPath.row)
+              tableView.deleteRows(at: [indexPath], with: .fade)
+           
+          }
     }
-    //MARK: Load/Save
     
-    func save(){
+ 
+    //MARK: Load/Save
+    func saveDaily(){
+        do{
+           let data = try NSKeyedArchiver.archivedData(withRootObject: dailyPushups, requiringSecureCoding: false)
+           try data.write(to: Entry.ArchiveURLDaily)
+           historyTable.reloadData()
+   
+       }catch{
+           os_log("Cannot save due to %@", log: OSLog.default, type: .debug, error.localizedDescription)
+       }
+    }
+    
+    func saveEntries(){
         
        do{
             let data = try NSKeyedArchiver.archivedData(withRootObject: entries, requiringSecureCoding: false)
@@ -166,6 +175,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                return nil
            }
        }
+    func loadDaily() -> [Entry]? {
+              do{
+                  let data = try Data(contentsOf: Entry.ArchiveURLDaily)
+                  return try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [Entry]
+              }catch{
+                  os_log("Cannot load due to %@", log: OSLog.default, type: .debug, error.localizedDescription)
+                  return nil
+              }
+          }
     
 }
 

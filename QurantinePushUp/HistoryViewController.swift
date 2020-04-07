@@ -12,6 +12,7 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
     
     @IBOutlet weak var Table: UITableView!
     var data = [Entry]()
+    var deleted = [Entry]()
     var row = 0
     
     override func viewDidLoad() {
@@ -34,14 +35,15 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
        cell.pushups!.text = String(data[indexPath.row].pushups)
        return cell;
    }
-   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+   
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
        if editingStyle == .delete {
+           deleted.append(data[indexPath.row])
            data.remove(at: indexPath.row)
            tableView.deleteRows(at: [indexPath], with: .fade)
         
-       } else if editingStyle == .insert {
-           // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
        }
+       
    }
    
    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
